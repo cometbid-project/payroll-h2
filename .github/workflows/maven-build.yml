@@ -4,7 +4,7 @@ name: Maven build and test
 on:
   push:
     branches: [ "dev**", "staging**", "main**", "prod**", "uat**", "preprod**" ]
-    paths: [ "/**", "!**/README.md", "!**/LICENSE", ".github/workflows/docker-publish.yml"]
+    paths: [ "/**", "!**/README.md", "!**/LICENSE", ".github/workflows/maven-build.yml"]
 
 jobs:
   build_test:
@@ -17,14 +17,12 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v4
 
-      - name: Set up JDK 17 for deploy to github packages
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '21'
           cache: 'maven'
-          server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
-          settings-path: ${{ github.workspace }} # location for the settings.xml file
 
       - name: Code vulnerability scanning
         uses: anchore/scan-action@v3
