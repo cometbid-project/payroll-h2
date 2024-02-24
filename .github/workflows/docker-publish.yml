@@ -1,18 +1,9 @@
 # Github Actions Workflow file that builds and pushes the docker images.
-name: payroll-h2
-env:
-  IMAGE_NAME: payroll-h2
-  DOCKERHUB_TAG: "${{ secrets.DOCKERHUB_USERNAME }}/payroll-h2"
-  DOCKERFILE_PATH: .
-  VERSION: latest
+name: Docker publish
 
 on:
-  push:
-    branches: [ "dev**", "staging**", "main**", "prod**", "uat**", "preprod**" ]
-    paths: [ "/**", "!**/README.md", "!**/LICENSE", ".github/workflows/docker-publish.yml"]
-
   release:
-    types: [ created ]
+    types: [created]
 
 jobs:
   build:
@@ -30,30 +21,9 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
           cache: 'maven'
-      - name: Code vulnerability scanning
-        uses: anchore/scan-action@v3
-        id: scan
-        with:
-          path: "${{ github.workspace }}"
-          fail-build: false
-          severity-cutoff: high
-          acs-report-enable: true
-      - name: Upload vulnerability report
-        uses: github/codeql-action/upload-sarif@v2
-        if: success() || failure()
-        with:
-          sarif_file: ${{ steps.scan.outputs.sarif }}
-      - name: Build, unit tests and integration tests
-        run: |
-          chmod +x mvnw
-          ./mvnw install
-      - uses: anchore/scan-action/download-grype@v3
-        id: grype
-      - run: ${{steps.grype.outputs.cmd}} dir:.
-
+          
   docker-publish:
     name: Package and Publish
-    if: ${{ github.event_name }} == 'release'
     needs: [ build ]
     runs-on: ubuntu-latest
     permissions:
