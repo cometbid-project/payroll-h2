@@ -21,26 +21,37 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.cometbid.kubeforce.payroll.employee;
+package org.cometbid.kubeforce.payroll.jackson.util;
 
-import lombok.extern.log4j.Log4j2;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
 /**
  *
  * @author samueladebowale
  */
-@Log4j2
-@Mapper(componentModel = "spring")
-public abstract class EmployeeMapper {
+public class LocalDateTimeSerializer extends StdSerializer<LocalDateTime> {
 
-    @Mapping(source = "toUpdate.firstName", target = "firstName")
-    @Mapping(source = "toUpdate.lastName", target = "lastName")
-    @Mapping(source = "toUpdate.middleName", target = "middleName")
-    abstract Employee updateEmployeeName(Employee employee, EmployeeNameDTO toUpdate);
+    private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MMM-dd HH:mm");
 
-    @Mapping(source = "toUpdate.salary", target = "salary")
-    @Mapping(source = "toUpdate.employeeType", target = "empType")
-    abstract Employee updateEmployeeType(Employee employee, EmployeeTypeDTO toUpdate);
+    public LocalDateTimeSerializer() {
+        this(null);
+    }
+
+    public LocalDateTimeSerializer(final Class<LocalDateTime> t) {
+        super(t);
+    }
+
+    @Override
+    public void serialize(final LocalDateTime value, final JsonGenerator gen, final SerializerProvider arg2) 
+                    throws IOException, JsonProcessingException {
+        
+        gen.writeString(formatter.format(value));
+    }
 }

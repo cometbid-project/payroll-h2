@@ -21,26 +21,48 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.cometbid.kubeforce.payroll.employee;
+package org.cometbid.kubeforce.payroll.base;
 
-import lombok.extern.log4j.Log4j2;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import java.io.Serializable;
+import java.util.Objects;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+import lombok.experimental.Accessors;
+import org.cometbid.kubeforce.payroll.common.util.ArtifactForFramework;
 
 /**
  *
  * @author samueladebowale
+ * @param <T>
  */
-@Log4j2
-@Mapper(componentModel = "spring")
-public abstract class EmployeeMapper {
+@Accessors(chain = true)
+@ToString(callSuper = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+public abstract class AbstractEntityId<T extends Serializable> implements Serializable, EntityId<T> {
 
-    @Mapping(source = "toUpdate.firstName", target = "firstName")
-    @Mapping(source = "toUpdate.lastName", target = "lastName")
-    @Mapping(source = "toUpdate.middleName", target = "middleName")
-    abstract Employee updateEmployeeName(Employee employee, EmployeeNameDTO toUpdate);
+    /**
+     *
+     */
+    private static final long serialVersionUID = 5962381739484024405L;
 
-    @Mapping(source = "toUpdate.salary", target = "salary")
-    @Mapping(source = "toUpdate.employeeType", target = "empType")
-    abstract Employee updateEmployeeType(Employee employee, EmployeeTypeDTO toUpdate);
+    private T id;
+
+    @ArtifactForFramework
+    protected AbstractEntityId() {
+    }
+
+    protected AbstractEntityId(T id) {
+        this.id = Objects.requireNonNull(id, "id must not be null");
+    }
+
+    @Override
+    public T getId() {
+        return id;
+    }
+
+    @Override
+    public String asString() {
+        return id.toString();
+    }
+
 }

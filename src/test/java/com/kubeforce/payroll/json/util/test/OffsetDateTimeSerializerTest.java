@@ -21,26 +21,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.cometbid.kubeforce.payroll.employee;
+package com.kubeforce.payroll.json.util.test;
 
-import lombok.extern.log4j.Log4j2;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
+import static com.kubeforce.payroll.json.util.test.AbstractJackson2MarshallingTest.serializerProvider;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.time.OffsetDateTime;
+import org.cometbid.kubeforce.payroll.jackson.util.OffsetDateTimeSerializer;
+import org.junit.jupiter.api.Test;
 
 /**
  *
  * @author samueladebowale
  */
-@Log4j2
-@Mapper(componentModel = "spring")
-public abstract class EmployeeMapper {
+public class OffsetDateTimeSerializerTest extends AbstractJackson2MarshallingTest {
 
-    @Mapping(source = "toUpdate.firstName", target = "firstName")
-    @Mapping(source = "toUpdate.lastName", target = "lastName")
-    @Mapping(source = "toUpdate.middleName", target = "middleName")
-    abstract Employee updateEmployeeName(Employee employee, EmployeeNameDTO toUpdate);
+    @Test
+    public void test() throws IOException {
+        OffsetDateTimeSerializer serializer = new OffsetDateTimeSerializer();
 
-    @Mapping(source = "toUpdate.salary", target = "salary")
-    @Mapping(source = "toUpdate.employeeType", target = "empType")
-    abstract Employee updateEmployeeType(Employee employee, EmployeeTypeDTO toUpdate);
+        OffsetDateTime utcValue = OffsetDateTime.now();
+        StringWriter stringJson = new StringWriter();
+        JsonGenerator generator = new JsonFactory().createGenerator(stringJson);
+
+        serializer.serialize(utcValue, generator, serializerProvider);
+    }
+
 }

@@ -21,26 +21,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.cometbid.kubeforce.payroll.employee;
-
-import lombok.extern.log4j.Log4j2;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+package org.cometbid.kubeforce.payroll.base;
 
 /**
  *
  * @author samueladebowale
+ *
+ * @param <T>
  */
-@Log4j2
-@Mapper(componentModel = "spring")
-public abstract class EmployeeMapper {
+public interface UniqueIdGenerator<T> {
 
-    @Mapping(source = "toUpdate.firstName", target = "firstName")
-    @Mapping(source = "toUpdate.lastName", target = "lastName")
-    @Mapping(source = "toUpdate.middleName", target = "middleName")
-    abstract Employee updateEmployeeName(Employee employee, EmployeeNameDTO toUpdate);
-
-    @Mapping(source = "toUpdate.salary", target = "salary")
-    @Mapping(source = "toUpdate.employeeType", target = "empType")
-    abstract Employee updateEmployeeType(Employee employee, EmployeeTypeDTO toUpdate);
+    T getNextUniqueId();
 }

@@ -21,26 +21,40 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.cometbid.kubeforce.payroll.employee;
+package org.cometbid.kubeforce.payroll.common.util;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
+import java.util.Set;
 import lombok.extern.log4j.Log4j2;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import org.cometbid.kubeforce.payroll.exceptions.CustomConstraintViolationException;
 
 /**
  *
  * @author samueladebowale
+ * @param <T>
  */
 @Log4j2
-@Mapper(componentModel = "spring")
-public abstract class EmployeeMapper {
+public class GenericProgrammaticValidator<T> {
 
-    @Mapping(source = "toUpdate.firstName", target = "firstName")
-    @Mapping(source = "toUpdate.lastName", target = "lastName")
-    @Mapping(source = "toUpdate.middleName", target = "middleName")
-    abstract Employee updateEmployeeName(Employee employee, EmployeeNameDTO toUpdate);
+    private static final Validator validator;
 
-    @Mapping(source = "toUpdate.salary", target = "salary")
-    @Mapping(source = "toUpdate.employeeType", target = "empType")
-    abstract Employee updateEmployeeType(Employee employee, EmployeeTypeDTO toUpdate);
+    static {
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        validator = factory.getValidator();
+    }
+
+    public static <T> T validate(T model) {
+
+        log.info("Validating model object: {}", model);
+        Set<ConstraintViolation<Object>> violations = validator.validate(model);
+
+        if (!violations.isEmpty()) {
+            throw new CustomConstraintViolationException(violations);
+        }
+
+        return model;
+    }
 }

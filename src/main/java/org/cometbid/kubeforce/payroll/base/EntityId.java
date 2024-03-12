@@ -21,26 +21,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.cometbid.kubeforce.payroll.employee;
+package org.cometbid.kubeforce.payroll.base;
 
-import lombok.extern.log4j.Log4j2;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import java.io.Serializable;
 
 /**
+ * Interface for primary keys of entities.
  *
  * @author samueladebowale
+ *
+ * @param <T> the underlying type of the entity id
  */
-@Log4j2
-@Mapper(componentModel = "spring")
-public abstract class EmployeeMapper {
+public interface EntityId<T> extends Serializable {
 
-    @Mapping(source = "toUpdate.firstName", target = "firstName")
-    @Mapping(source = "toUpdate.lastName", target = "lastName")
-    @Mapping(source = "toUpdate.middleName", target = "middleName")
-    abstract Employee updateEmployeeName(Employee employee, EmployeeNameDTO toUpdate);
+    T getId();
 
-    @Mapping(source = "toUpdate.salary", target = "salary")
-    @Mapping(source = "toUpdate.employeeType", target = "empType")
-    abstract Employee updateEmployeeType(Employee employee, EmployeeTypeDTO toUpdate);
+    String asString();
 }

@@ -23,24 +23,20 @@
  */
 package org.cometbid.kubeforce.payroll.employee;
 
-import lombok.extern.log4j.Log4j2;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-
 /**
  *
  * @author samueladebowale
  */
-@Log4j2
-@Mapper(componentModel = "spring")
-public abstract class EmployeeMapper {
+public interface EmployeeService {
 
-    @Mapping(source = "toUpdate.firstName", target = "firstName")
-    @Mapping(source = "toUpdate.lastName", target = "lastName")
-    @Mapping(source = "toUpdate.middleName", target = "middleName")
-    abstract Employee updateEmployeeName(Employee employee, EmployeeNameDTO toUpdate);
+    Employee saveEmployee(CreateEmployeeRequest requestDto);
 
-    @Mapping(source = "toUpdate.salary", target = "salary")
-    @Mapping(source = "toUpdate.employeeType", target = "empType")
-    abstract Employee updateEmployeeType(Employee employee, EmployeeTypeDTO toUpdate);
+    Employee updateEmployee(UpdEmployeeRequest requestDto, final String employeeId);
+
+    Employee updateEmployeeName(EmployeeNameDTO employeeDto, final String employeeId);
+
+    Employee updateEmployeeType(EmployeeTypeDTO employeeDto, final String employeeId);
+    
+    void deleteEmployee(Employee employee);
+
 }

@@ -21,26 +21,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.cometbid.kubeforce.payroll.employee;
+package org.cometbid.kubeforce.payroll.base;
 
-import lombok.extern.log4j.Log4j2;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import java.util.Random;
+import java.util.UUID;
+import java.util.random.RandomGenerator;
 
 /**
  *
  * @author samueladebowale
  */
-@Log4j2
-@Mapper(componentModel = "spring")
-public abstract class EmployeeMapper {
+public class InMemoryUniqueIdGenerator implements UniqueIdGenerator<UUID> {
 
-    @Mapping(source = "toUpdate.firstName", target = "firstName")
-    @Mapping(source = "toUpdate.lastName", target = "lastName")
-    @Mapping(source = "toUpdate.middleName", target = "middleName")
-    abstract Employee updateEmployeeName(Employee employee, EmployeeNameDTO toUpdate);
+    static final long LEFT_LIMIT = 1L;
+    static final long RIGHT_LIMIT = 100_000_000_000_000L;
+    
+    @Override
+    public UUID getNextUniqueId() {
+        return UUID.randomUUID();
+    }
 
-    @Mapping(source = "toUpdate.salary", target = "salary")
-    @Mapping(source = "toUpdate.employeeType", target = "empType")
-    abstract Employee updateEmployeeType(Employee employee, EmployeeTypeDTO toUpdate);
+    public static String getUniqueStringId() {
+        return UUID.randomUUID().toString();
+    }
+    
+    public static long getNextUniqueLongId() {
+        return RandomGenerator.getDefault().nextLong(LEFT_LIMIT, RIGHT_LIMIT);
+    }
+    
+    public static Long generateUniqueLongId() {
+        return new Random().nextLong();
+    }
 }

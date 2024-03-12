@@ -23,24 +23,35 @@
  */
 package org.cometbid.kubeforce.payroll.employee;
 
-import lombok.extern.log4j.Log4j2;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
+import javax.money.MonetaryAmount;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import static org.cometbid.kubeforce.payroll.employee.Employee.EMPLOYEE_TYPE;
+import static org.cometbid.kubeforce.payroll.employee.Employee.SALARY;
+import org.cometbid.kubeforce.payroll.validators.VerifyEnumValue;
+import org.javamoney.moneta.Money;
 
 /**
  *
  * @author samueladebowale
  */
-@Log4j2
-@Mapper(componentModel = "spring")
-public abstract class EmployeeMapper {
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class EmployeeTypeDTO {
 
-    @Mapping(source = "toUpdate.firstName", target = "firstName")
-    @Mapping(source = "toUpdate.lastName", target = "lastName")
-    @Mapping(source = "toUpdate.middleName", target = "middleName")
-    abstract Employee updateEmployeeName(Employee employee, EmployeeNameDTO toUpdate);
+    @SerializedName(EMPLOYEE_TYPE)
+    @JsonProperty(EMPLOYEE_TYPE)
+    @VerifyEnumValue(EmployeeType.class)
+    private String employeeType;
 
-    @Mapping(source = "toUpdate.salary", target = "salary")
-    @Mapping(source = "toUpdate.employeeType", target = "empType")
-    abstract Employee updateEmployeeType(Employee employee, EmployeeTypeDTO toUpdate);
+    @SerializedName(SALARY)
+    @JsonProperty(SALARY)
+    private MonetaryAmount salary;
+    
 }

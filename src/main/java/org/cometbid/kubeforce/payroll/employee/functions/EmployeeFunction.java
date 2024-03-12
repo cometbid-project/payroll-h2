@@ -21,20 +21,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.cometbid.kubeforce.payroll.employee;
+package org.cometbid.kubeforce.payroll.employee.functions;
 
+
+import java.util.function.Function;
 import java.util.Optional;
-import org.springframework.data.jpa.repository.JpaRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.cometbid.kubeforce.payroll.employee.Employee;
+import org.cometbid.kubeforce.payroll.employee.EmployeeRepository;
+import org.springframework.stereotype.Component;
 
 /**
- *
+ * 
  * @author samueladebowale
  */
-public interface EmployeeRepository extends JpaRepository<Employee, Long> {
+@Log4j2
+@Component
+@RequiredArgsConstructor
+public class EmployeeFunction implements Function<Long, Employee> {
 
-    Optional<Employee> findByEmployeeIdIgnoreCase(String employeeId);
-    
-    Optional<Employee> deleteByEmployeeIdIgnoreCase(String employeeId);
+    //@Autowired
+    private final EmployeeRepository employeeRepository;
 
-    boolean existsByEmail(String email);
+    @Override
+    public Employee apply(Long s) {
+        Optional<Employee> employeeOptional = employeeRepository.findById(s);
+        
+        if (employeeOptional.isPresent()) {
+            return employeeOptional.get();
+        }
+        return null;
+    }
 }

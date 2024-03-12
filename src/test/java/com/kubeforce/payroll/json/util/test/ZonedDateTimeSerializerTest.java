@@ -21,26 +21,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.cometbid.kubeforce.payroll.employee;
+package com.kubeforce.payroll.json.util.test;
 
-import lombok.extern.log4j.Log4j2;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.time.ZonedDateTime;
+import org.cometbid.kubeforce.payroll.jackson.util.ZonedDateTimeSerializer;
+import org.junit.jupiter.api.Test;
 
 /**
  *
  * @author samueladebowale
  */
-@Log4j2
-@Mapper(componentModel = "spring")
-public abstract class EmployeeMapper {
+public class ZonedDateTimeSerializerTest extends AbstractJackson2MarshallingTest {
+  
+    @Test
+    public void test() throws IOException {
+        ZonedDateTimeSerializer serializer = new ZonedDateTimeSerializer();
 
-    @Mapping(source = "toUpdate.firstName", target = "firstName")
-    @Mapping(source = "toUpdate.lastName", target = "lastName")
-    @Mapping(source = "toUpdate.middleName", target = "middleName")
-    abstract Employee updateEmployeeName(Employee employee, EmployeeNameDTO toUpdate);
+        ZonedDateTime utcValue = ZonedDateTime.now();
+        StringWriter stringJson = new StringWriter();
+        JsonGenerator generator = new JsonFactory().createGenerator(stringJson);
 
-    @Mapping(source = "toUpdate.salary", target = "salary")
-    @Mapping(source = "toUpdate.employeeType", target = "empType")
-    abstract Employee updateEmployeeType(Employee employee, EmployeeTypeDTO toUpdate);
+        serializer.serialize(utcValue, generator, serializerProvider);
+    }
 }

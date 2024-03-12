@@ -23,24 +23,32 @@
  */
 package org.cometbid.kubeforce.payroll.employee;
 
-import lombok.extern.log4j.Log4j2;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-
+import javax.money.MonetaryAmount;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 /**
  *
  * @author samueladebowale
  */
-@Log4j2
-@Mapper(componentModel = "spring")
-public abstract class EmployeeMapper {
+@Data
+@ToString(callSuper = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
+@NoArgsConstructor
+public class UpdEmployeeRequest extends EmployeeRequest {
 
-    @Mapping(source = "toUpdate.firstName", target = "firstName")
-    @Mapping(source = "toUpdate.lastName", target = "lastName")
-    @Mapping(source = "toUpdate.middleName", target = "middleName")
-    abstract Employee updateEmployeeName(Employee employee, EmployeeNameDTO toUpdate);
+    /*
+    @SerializedName(EMPLOYEE_ID)
+    @JsonProperty(EMPLOYEE_ID)
+    private String employeeId;
+    */
+    
+    @Builder
+    public UpdEmployeeRequest(String firstName, String middleName, 
+            String lastName, String employeeType, MonetaryAmount salary) {
+        super(firstName, middleName, lastName, employeeType, salary);
+    }
 
-    @Mapping(source = "toUpdate.salary", target = "salary")
-    @Mapping(source = "toUpdate.employeeType", target = "empType")
-    abstract Employee updateEmployeeType(Employee employee, EmployeeTypeDTO toUpdate);
 }

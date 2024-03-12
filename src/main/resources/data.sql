@@ -1,2 +1,14 @@
-INSERT INTO employee (name, employeeid, email, salary) values
-('banu','001','banup@yahoo.com','10000');
+/*
+INSERT INTO employee 
+(
+    id, employee_id, first_name, 
+    middle_name, last_name, email, 
+    sal_amount, sal_currency
+)
+ values
+(
+    8487856, 'LEMGI67437', 'Lexiton', 
+    'Mark', 'Gibson', 'lexiton@yahoo.com', 
+    10000, 'USD'
+);
+*/

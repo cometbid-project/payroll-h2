@@ -21,26 +21,44 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.cometbid.kubeforce.payroll.employee;
+package org.cometbid.kubeforce.payroll;
 
+import java.util.Map;
+import java.util.Set;
 import lombok.extern.log4j.Log4j2;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import org.cometbid.kubeforce.payroll.common.util.CurrencyFactory;
+import org.cometbid.kubeforce.payroll.common.util.LocalizationContextUtils;
+import org.cometbid.kubeforce.payroll.common.util.TimeZonesConverter;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 /**
  *
  * @author samueladebowale
  */
 @Log4j2
-@Mapper(componentModel = "spring")
-public abstract class EmployeeMapper {
+@RestController
+public class HomeController {
 
-    @Mapping(source = "toUpdate.firstName", target = "firstName")
-    @Mapping(source = "toUpdate.lastName", target = "lastName")
-    @Mapping(source = "toUpdate.middleName", target = "middleName")
-    abstract Employee updateEmployeeName(Employee employee, EmployeeNameDTO toUpdate);
+    @GetMapping("/")
+    public String index() {
+        return "Hello, this is Cometbid.org's public api";
+    }
 
-    @Mapping(source = "toUpdate.salary", target = "salary")
-    @Mapping(source = "toUpdate.employeeType", target = "empType")
-    abstract Employee updateEmployeeType(Employee employee, EmployeeTypeDTO toUpdate);
+    @GetMapping("timezones")
+    public Set<String> timezones() {
+        return TimeZonesConverter.getAvailableTimeZoneIds();
+    }
+
+    @GetMapping("locales")
+    public Map<String, String> locales() {
+        return LocalizationContextUtils.getInstance().getSystemLocales();
+    }
+    
+    @GetMapping("currencies")
+    public Set<String> currencies() {
+        return CurrencyFactory.Currency.getAllNames();
+    }
+
 }

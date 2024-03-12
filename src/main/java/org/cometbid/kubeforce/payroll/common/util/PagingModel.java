@@ -21,26 +21,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.cometbid.kubeforce.payroll.employee;
-
-import lombok.extern.log4j.Log4j2;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+package org.cometbid.kubeforce.payroll.common.util;
 
 /**
  *
  * @author samueladebowale
  */
-@Log4j2
-@Mapper(componentModel = "spring")
-public abstract class EmployeeMapper {
+public record PagingModel(int page, int size) {
 
-    @Mapping(source = "toUpdate.firstName", target = "firstName")
-    @Mapping(source = "toUpdate.lastName", target = "lastName")
-    @Mapping(source = "toUpdate.middleName", target = "middleName")
-    abstract Employee updateEmployeeName(Employee employee, EmployeeNameDTO toUpdate);
+    private static final int DEFAULT_PAGESIZE = 10;
+    private static final int DEFAULT_STARTPAGE = 1;
 
-    @Mapping(source = "toUpdate.salary", target = "salary")
-    @Mapping(source = "toUpdate.employeeType", target = "empType")
-    abstract Employee updateEmployeeType(Employee employee, EmployeeTypeDTO toUpdate);
+    public static final PagingModel DEFAULT = new PagingModel(DEFAULT_STARTPAGE,
+            DEFAULT_PAGESIZE);
+
+    public int getPage() {
+        return this.page - 1;
+    }
+
+    public int getSize() {
+        return this.size;
+    }
+
+    public static PagingModel of(int page, int size) {
+        return new PagingModel(page, size);
+    }
 }

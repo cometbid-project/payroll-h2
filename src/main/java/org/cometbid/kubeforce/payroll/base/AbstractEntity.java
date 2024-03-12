@@ -21,26 +21,58 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.cometbid.kubeforce.payroll.employee;
+package org.cometbid.kubeforce.payroll.base;
 
-import lombok.extern.log4j.Log4j2;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.Id;
+import jakarta.persistence.MappedSuperclass;
+import java.io.Serializable;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+import lombok.experimental.Accessors;
+import org.cometbid.kubeforce.payroll.gson.util.Exclude;
+import org.cometbid.kubeforce.payroll.common.util.ArtifactForFramework;
+import org.springframework.data.annotation.Version;
 
 /**
  *
  * @author samueladebowale
+ * @param <T>
  */
-@Log4j2
-@Mapper(componentModel = "spring")
-public abstract class EmployeeMapper {
+@MappedSuperclass
+@Accessors(chain = true)
+@ToString(callSuper = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+public abstract class AbstractEntity<T extends EntityId> implements Entity<T>, Serializable {
 
-    @Mapping(source = "toUpdate.firstName", target = "firstName")
-    @Mapping(source = "toUpdate.lastName", target = "lastName")
-    @Mapping(source = "toUpdate.middleName", target = "middleName")
-    abstract Employee updateEmployeeName(Employee employee, EmployeeNameDTO toUpdate);
+    /**
+     *
+     */
+    private static final long serialVersionUID = 6425982031170127365L;
 
-    @Mapping(source = "toUpdate.salary", target = "salary")
-    @Mapping(source = "toUpdate.employeeType", target = "empType")
-    abstract Employee updateEmployeeType(Employee employee, EmployeeTypeDTO toUpdate);
+    @Id
+    @JsonIgnore
+    @Exclude
+    protected T id;
+
+    @Version
+    @JsonIgnore
+    @Exclude
+    protected int version;
+
+    @ArtifactForFramework
+    protected AbstractEntity() {
+    }
+
+    protected AbstractEntity(T id) {
+        this.id = id;
+    }
+
+    @Override
+    public T getId() {
+        return id;
+    }
+
+    protected abstract void setId();
+
 }

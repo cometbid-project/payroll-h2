@@ -21,26 +21,51 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.cometbid.kubeforce.payroll.employee;
+package org.cometbid.kubeforce.payroll.gson.util;
 
-import lombok.extern.log4j.Log4j2;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import java.io.IOException;
+import javax.money.CurrencyUnit;
+import javax.money.Monetary;
+import javax.money.UnknownCurrencyException;
+
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.TypeAdapter;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
+import com.google.gson.stream.JsonWriter;
 
 /**
  *
  * @author samueladebowale
  */
-@Log4j2
-@Mapper(componentModel = "spring")
-public abstract class EmployeeMapper {
+/**
+ * Allows parsing of {@linkplain CurrencyUnit} according to ISO.
+ */
+class CurrencyUnitAdapter extends TypeAdapter<CurrencyUnit> {
 
-    @Mapping(source = "toUpdate.firstName", target = "firstName")
-    @Mapping(source = "toUpdate.lastName", target = "lastName")
-    @Mapping(source = "toUpdate.middleName", target = "middleName")
-    abstract Employee updateEmployeeName(Employee employee, EmployeeNameDTO toUpdate);
+    @Override
+    public void write(final JsonWriter writer, final CurrencyUnit value) throws IOException {
 
-    @Mapping(source = "toUpdate.salary", target = "salary")
-    @Mapping(source = "toUpdate.employeeType", target = "empType")
-    abstract Employee updateEmployeeType(Employee employee, EmployeeTypeDTO toUpdate);
+        if (value == null) {
+            writer.nullValue();
+            return;
+        }
+
+        writer.value(value.getCurrencyCode());
+    }
+
+    @Override
+    public CurrencyUnit read(final JsonReader reader) throws IOException {
+
+        if (reader.peek() == JsonToken.NULL) {
+            reader.nextNull();
+            return null;
+        }
+
+        try {
+            return Monetary.getCurrency(reader.nextString());
+        } catch (UnknownCurrencyException e) {
+            throw new JsonSyntaxException(e);
+        }
+    }
 }
